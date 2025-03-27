@@ -77,7 +77,7 @@ def test_get_boxers(ring_model, sample_ring):
     """
     ring_model.ring.extend(sample_ring)
     
-    all_boxers = playlist_model.get_boxers()
+    all_boxers = RingModel.get_boxers()
     assert len(all_boxers) == 2
 
     assert all_boxers[0].id == 1
@@ -103,7 +103,7 @@ def test_get_fighting_skill(ring_model, sample_boxer1):
     """
     
     sample_boxer_skill1 = ring_model.get_fighting_skill(sample_boxer1)
-    assert sample_boxer_skill1 = 917.22 # Expected Boxer 1 skill to be 917.22
+    assert sample_boxer_skill1 == 917.22 # Expected Boxer 1 skill to be 917.22
     
     
 def test_fight(ring_model):
