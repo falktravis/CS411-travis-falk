@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from playlist.utils.api_utils import get_random
+from boxing.utils.api_utils import get_random
 
 
 RANDOM_NUMBER = 4
