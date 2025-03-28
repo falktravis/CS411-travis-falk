@@ -2,7 +2,7 @@
 
 # Variables
 IMAGE_NAME=boxing
-CONTAINER_TAG=box_container
+CONTAINER_TAG=boxing_container
 HOST_PORT=5000
 CONTAINER_PORT=5000
 DB_VOLUME_PATH=./sql/init_db.sql
@@ -25,26 +25,26 @@ if [ ! -d "${DB_VOLUME_PATH}" ]; then
 fi
 
 # Stop and remove the running container if it exists
-if [ "$(docker ps -q -a -f name=${IMAGE_NAME}_container)" ]; then
-    echo "Stopping running container: ${IMAGE_NAME}_container"
-    docker stop ${IMAGE_NAME}_container
+if [ "$(docker ps -q -a -f name=${CONTAINER_TAG}" ]; then
+    echo "Stopping running container: ${CONTAINER_TAG}"
+    docker stop ${CONTAINER_TAG}
 
     # Check if the stop was successful
     if [ $? -eq 0 ]; then
-        echo "Removing container: ${IMAGE_NAME}_container"
-        docker rm ${IMAGE_NAME}_container
+        echo "Removing container: ${CONTAINER_TAG}"
+        docker rm ${CONTAINER_TAG}
     else
-        echo "Failed to stop container: ${IMAGE_NAME}_container"
+        echo "Failed to stop container: ${CONTAINER_TAG}"
         exit 1
     fi
 else
-    echo "No running container named ${IMAGE_NAME}_container found."
+    echo "No running container named ${CONTAINER_TAG} found."
 fi
 
 # Run the Docker container with the necessary ports and volume mappings
 echo "Running Docker container..."
 docker run -d \
-  --name ${IMAGE_NAME}_container \
+  --name ${CONTAINER_TAG} \
   --env-file .env \
   -v $(pwd)/db:/app/db \
   -p ${HOST_PORT}:${CONTAINER_PORT} \
