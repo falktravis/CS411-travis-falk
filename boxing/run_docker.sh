@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME=Boxing
+IMAGE_NAME=boxing
 CONTAINER_TAG=box_container
 HOST_PORT=5000
 CONTAINER_PORT=5000
