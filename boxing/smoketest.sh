@@ -222,12 +222,12 @@ check_db
 
 
 # Create boxers
-add_boxer "Mike Tyson"  180 74 56
-add_boxer "Muhammad Ali" "Heavyweight" 185 78 74
-add_boxer "Floyd Mayweather" "Welterweight" 170 72 50
-add_boxer "Manny Pacquiao" "Welterweight" 160 67 62
-add_boxer "Canelo Alvarez" "Middleweight" 175 70 57
-add_boxer "Peter Golbus" "Heavyweight" 180 15 20
+add_boxer "Mike Tyson" 256 180 74 56
+add_boxer "Muhammad Ali" 190 185 78 74
+add_boxer "Floyd Mayweather" 230 170 72 50
+add_boxer "Manny Pacquiao" 245 160 67 62
+add_boxer "Canelo Alvarez" 198 175 70 57
+add_boxer "Peter Golbus" 200 180 15 20
 
 enter_ring "Mike Tyson"
 enter_ring "Peter Golbus"
