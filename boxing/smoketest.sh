@@ -213,58 +213,69 @@ get_leaderboard() {
 }
 
 # Initialize the database
-sqlite3 db/playlist.db < sql/init_db.sql
+sqlite3 db/boxing.db < sql/init_db.sql
 
 # Health checks
 check_health
 check_db
 
-# Create songs
-create_song "The Beatles" "Hey Jude" 1968 "Rock" 180
-create_song "The Rolling Stones" "Paint It Black" 1966 "Rock" 180
-create_song "The Beatles" "Let It Be" 1970 "Rock" 180
-create_song "Queen" "Bohemian Rhapsody" 1975 "Rock" 180
-create_song "Led Zeppelin" "Stairway to Heaven" 1971 "Rock" 180
 
-delete_song_by_id 1
-get_all_songs
 
-get_song_by_id 2
-get_song_by_compound_key "The Beatles" "Let It Be" 1970
-get_random_song
+# Create boxers
+add_boxer "Mike Tyson" "Heavyweight" 180 74 56
+add_boxer "Muhammad Ali" "Heavyweight" 185 78 74
+add_boxer "Floyd Mayweather" "Welterweight" 170 72 50
+add_boxer "Manny Pacquiao" "Welterweight" 160 67 62
+add_boxer "Canelo Alvarez" "Middleweight" 175 70 57
+add_boxer "Peter Golbus" "Heavyweight" 180 15 20
 
-add_song_to_playlist "The Rolling Stones" "Paint It Black" 1966
-add_song_to_playlist "Queen" "Bohemian Rhapsody" 1975
-add_song_to_playlist "Led Zeppelin" "Stairway to Heaven" 1971
-add_song_to_playlist "The Beatles" "Let It Be" 1970
+enter_ring "Mike Tyson"
+enter_ring "Peter Golbus"
+get_boxers
+fight
+clear_ring
 
-remove_song_from_playlist "The Beatles" "Let It Be" 1970
-remove_song_by_track_number 2
+enter_ring "Floyd Mayweather"
+enter_ring "Manny Pacquiao"
+get_boxers
+fight
+clear_ring
 
-get_all_songs_from_playlist
-get_random_song_from_playlist
-
-add_song_to_playlist "Queen" "Bohemian Rhapsody" 1975
-add_song_to_playlist "The Beatles" "Let It Be" 1970
-
-move_song_to_beginning "The Beatles" "Let It Be" 1970
-move_song_to_end "Queen" "Bohemian Rhapsody" 1975
-move_song_to_track_number "Led Zeppelin" "Stairway to Heaven" 1971 2
-swap_songs_in_playlist 1 2
-
-get_all_songs_from_playlist
-get_song_from_playlist_by_track_number 1
-
-get_playlist_length_duration
-
-play_current_song
-rewind_playlist
-
-play_entire_playlist
-play_current_song
-go-go_to_random_track
-play_rest_of_playlist
+enter_ring "Canelo Alvarez"
+enter_ring "Mike Tyson"
+get_boxers
+fight
+clear_ring
 
 get_leaderboard
+
+# Exceptions
+enter_ring "Mike Tyson"
+enter_ring "Muhammad Ali"
+enter_ring "Floyd Mayweather"
+clear_ring
+
+add_boxer "Mike Tyson" "Heavyweight" 180 74 56
+
+delete_boxer_by_id 10
+get_boxer_by_name "Donald Trump"
+
+get_boxer_by_id 1
+get_boxer_by_id 2
+get_boxer_by_id 3
+get_boxer_by_id 4
+get_boxer_by_id 5
+
+get_boxer_by_name "Mike Tyson"
+get_boxer_by_name "Muhammad Ali"
+get_boxer_by_name "Floyd Mayweather"
+get_boxer_by_name "Manny Pacquiao"
+get_boxer_by_name "Canelo Alvarez"
+
+delete_boxer_by_id 1
+delete_boxer_by_id 2
+delete_boxer_by_id 3
+delete_boxer_by_id 4
+delete_boxer_by_id 5
 
 echo "All tests passed successfully!"
