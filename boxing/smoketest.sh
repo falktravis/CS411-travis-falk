@@ -62,7 +62,7 @@ add_boxer() {
 
   echo "Adding boxer ($name - $weight, $age) to the ring..."
   curl -s -X POST "$BASE_URL/add-boxer" -H "Content-Type: application/json" \
-    -d "{\"name\":\"$name\", \"weight\":\"$weight\", \"height\":$height, \"reach\":\"$reach\", \"age\":$age}" | grep -q '"status": "success"'
+    -d "{\"name\":\"$name\", \"weight\":$weight, \"height\":$height, \"reach\":$reach, \"age\":$age}" | grep -q '"status": "success"'
 
   if [ $? -eq 0 ]; then
     echo "Boxer added successfully."
@@ -106,7 +106,8 @@ get_boxer_by_name() {
   boxer_name=$1
 
   echo "Getting boxer by NAME ($boxer_name)..."
-  response=$(curl -s -X GET "$BASE_URL/get-boxer-by-name/$boxer_name")
+  encoded_name=$(echo "$boxer_name" | sed 's/ /%20/g')
+  response=$(curl -s -X GET "$BASE_URL/get-boxer-by-name/$encoded_name")
   if echo "$response" | grep -q '"status": "success"'; then
     echo "Boxer retrieved successfully by NAME ($boxer_name)."
     if [ "$ECHO_JSON" = true ]; then
@@ -174,7 +175,7 @@ enter_ring() {
   name=$1
 
   echo "Adding boxer to ring ($name)..."
-  response=$(curl -s -X POST "$BASE_URL/enter-ring?name=$name" \
+  response=$(curl -s -X POST "$BASE_URL/enter-ring" \
     -H "Content-Type: application/json" \
     -d "{\"name\":\"$name\"}")
 
@@ -222,11 +223,11 @@ check_db
 
 
 # Create boxers
-add_boxer "Mike Tyson" 256 180 74 56
-add_boxer "Muhammad Ali" 190 185 78 74
-add_boxer "Floyd Mayweather" 230 170 72 50
-add_boxer "Manny Pacquiao" 245 160 67 62
-add_boxer "Canelo Alvarez" 198 175 70 57
+add_boxer "Mike Tyson" 256 180 74 39
+add_boxer "Muhammad Ali" 190 185 78 34
+add_boxer "Floyd Mayweather" 230 170 72 30
+add_boxer "Manny Pacquiao" 245 160 67 22
+add_boxer "Canelo Alvarez" 198 175 70 28
 add_boxer "Peter Golbus" 200 180 15 20
 
 enter_ring "Mike Tyson"
@@ -253,9 +254,9 @@ get_leaderboard
 enter_ring "Mike Tyson"
 enter_ring "Muhammad Ali"
 enter_ring "Floyd Mayweather"
-clear_ring
+clear_boxers
 
-add_boxer "Mike Tyson" "Heavyweight" 180 74 56
+add_boxer "Mike Tyson" 240 180 74 39
 
 delete_boxer_by_id 10
 get_boxer_by_name "Donald Trump"
