@@ -46,11 +46,129 @@ check_db() {
   fi
 }
 
+
+##########################################################
+#
+# Boxer Management
+#
+##########################################################
+
+add_boxer() {
+  name=$1
+  weight=$2
+  height=$3
+  reach=$4
+  age=$5
+
+  echo "Adding boxer ($name - $weight, $age) to the ring..."
+  curl -s -X POST "$BASE_URL/add-boxer" -H "Content-Type: application/json" \
+    -d "{\"name\":\"$name\", \"weight\":\"$weight\", \"height\":$height, \"reach\":\"$reach\", \"age\":$age}" | grep -q '"status": "success"'
+
+  if [ $? -eq 0 ]; then
+    echo "Boxer added successfully."
+  else
+    echo "Failed to add boxer."
+    exit 1
+  fi
+}
+
+delete_boxer_by_id() {
+  boxer_id=$1
+
+  echo "Deleting boxer by ID ($boxer_id)..."
+  response=$(curl -s -X DELETE "$BASE_URL/delete-boxer/$boxer_id")
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Boxer deleted successfully by ID ($boxer_id)."
+  else
+    echo "Failed to delete boxer by ID ($boxer_id)."
+    exit 1
+  fi
+}
+
+get_boxer_by_id() {
+  boxer_id=$1
+
+  echo "Getting boxer by ID ($boxer_id)..."
+  response=$(curl -s -X GET "$BASE_URL/get-boxer-by-id/$boxer_id")
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Boxer retrieved successfully by ID ($boxer_id)."
+    if [ "$ECHO_JSON" = true ]; then
+      echo "Boxer JSON (ID $boxer_id):"
+      echo "$response" | jq .
+    fi
+  else
+    echo "Failed to get boxer by ID ($boxer_id)."
+    exit 1
+  fi
+}
+
+get_boxer_by_name() {
+  boxer_name=$1
+
+  echo "Getting boxer by NAME ($boxer_name)..."
+  response=$(curl -s -X GET "$BASE_URL/get-boxer-by-name/$boxer_name")
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Boxer retrieved successfully by NAME ($boxer_name)."
+    if [ "$ECHO_JSON" = true ]; then
+      echo "Boxer JSON (NAME $boxer_name):"
+      echo "$response" | jq .
+    fi
+  else
+    echo "Failed to get boxer by NAME ($boxer_name)."
+    exit 1
+  fi
+}
+
 ############################################################
 #
-# Playlist Management
+# Ring Management
 #
 ############################################################
+
+fight() {
+  echo "Initiating bout..."
+  response=$(curl -s -X GET "$BASE_URL/fight")
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Fight started successfully."
+    if [ "$ECHO_JSON" = true ]; then
+      echo "Bout Winner:"
+      echo "$response" | jq .
+    fi
+  else
+    echo "Failed to initiate bout."
+    exit 1
+  fi
+}
+
+
+get_boxers() {
+  echo "Getting all boxers in the ring..."
+  response=$(curl -s -X GET "$BASE_URL/get-boxers")
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "All boxers retrieved successfully."
+    if [ "$ECHO_JSON" = true ]; then
+      echo "Boxers JSON:"
+      echo "$response" | jq .
+    fi
+  else
+    echo "Failed to get boxers."
+    exit 1
+  fi
+}
+
+
+clear_boxers() {
+  echo "Clearing boxers..."
+  response=$(curl -s -X POST "$BASE_URL/clear-boxers")
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Ring cleared successfully."
+  else
+    echo "Failed to clear ring."
+    exit 1
+  fi
+}
 
 enter_ring() {
   name=$1
@@ -63,7 +181,7 @@ enter_ring() {
   if echo "$response" | grep -q '"status": "success"'; then
     echo "Boxer added to ring successfully."
     if [ "$ECHO_JSON" = true ]; then
-      echo "Song JSON:"
+      echo "Bout Winner:"
       echo "$response" | jq .
     fi
   else
