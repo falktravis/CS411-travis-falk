@@ -25,7 +25,7 @@ if [ ! -d "${DB_VOLUME_PATH}" ]; then
 fi
 
 # Stop and remove the running container if it exists
-if [ "$(docker ps -q -a -f name=${CONTAINER_TAG}" ]; then
+if [ "$(docker ps -q -a -f name=${CONTAINER_TAG})" ]; then
     echo "Stopping running container: ${CONTAINER_TAG}"
     docker stop ${CONTAINER_TAG}
 
@@ -51,3 +51,5 @@ docker run -d \
   ${IMAGE_NAME}:${CONTAINER_TAG}
 
 echo "Docker container is running on port ${HOST_PORT}."
+
+
