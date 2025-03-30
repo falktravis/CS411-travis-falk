@@ -74,28 +74,28 @@ def test_create_boxer(mock_cursor):
 
 def test_create_boxer_invalid_weight():
     """Test error when trying to create a boxer with an invalid weight."""
-    with pytest.raises(ValueError, match="Weight must be at least 125 pounds"):
+    with pytest.raises(ValueError, match="Invalid weight: 124. Must be at least 125."):
         create_boxer(name="Tiny Boxer", weight=124, height=65, reach=64.0, age=25)
 
 
 def test_create_boxer_invalid_height():
     """Test error when trying to create a boxer with an invalid height."""
-    with pytest.raises(ValueError, match="Height must be greater than 0 inches"):
+    with pytest.raises(ValueError, match="Invalid height: 0. Must be greater than 0."):
         create_boxer(name="Zero Height Boxer", weight=180, height=0, reach=70.0, age=25)
 
 
 def test_create_boxer_invalid_reach():
     """Test error when trying to create a boxer with an invalid reach."""
-    with pytest.raises(ValueError, match="Reach must be greater than 0"):
+    with pytest.raises(ValueError, match="Invalid reach: 0. Must be greater than 0."):
         create_boxer(name="Zero Reach Boxer", weight=180, height=70, reach=0, age=25)
 
 
 def test_create_boxer_invalid_age():
     """Test error when trying to create a boxer with an invalid age."""
-    with pytest.raises(ValueError, match="Age must be between 18 and 40"):
+    with pytest.raises(ValueError, match="Invalid age: 17. Must be between 18 and 40."):
         create_boxer(name="Young Boxer", weight=180, height=70, reach=70.0, age=17)
 
-    with pytest.raises(ValueError, match="Age must be between 18 and 40"):
+    with pytest.raises(ValueError, match="Invalid age: 41. Must be between 18 and 40."):
         create_boxer(name="Old Boxer", weight=180, height=70, reach=70.0, age=41)
 
 
@@ -163,7 +163,7 @@ def test_get_boxer_by_id(mock_cursor):
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
     
-    expected_query = normalize_whitespace("SELECT id, name, weight, height, reach, age, fights, wins FROM boxers WHERE id = ?")
+    expected_query = normalize_whitespace("SELECT id, name, weight, height, reach, age FROM boxers WHERE id = ?")
     actual_query = normalize_whitespace(mock_cursor.execute.call_args[0][0])
     
     assert actual_query == expected_query, "The SQL query did not match the expected structure."
@@ -181,7 +181,7 @@ def test_get_boxer_by_id_not_found(mock_cursor):
     with pytest.raises(ValueError, match="Boxer with ID 999 not found"):
         get_boxer_by_id(999)
         
-    expected_query = normalize_whitespace("SELECT id, name, weight, height, reach, age, fights, wins FROM boxers WHERE id = ?")
+    expected_query = normalize_whitespace("SELECT id, name, weight, height, reach, age FROM boxers WHERE id = ?")
     actual_query = normalize_whitespace(mock_cursor.execute.call_args[0][0])
     
     assert actual_query == expected_query, "The SQL query did not match the expected structure."
@@ -202,7 +202,7 @@ def test_get_boxer_by_name(mock_cursor):
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
     
-    expected_query = normalize_whitespace("SELECT id, name, weight, height, reach, age, fights, wins FROM boxers WHERE name = ?")
+    expected_query = normalize_whitespace("SELECT id, name, weight, height, reach, age FROM boxers WHERE name = ?")
     actual_query = normalize_whitespace(mock_cursor.execute.call_args[0][0])
     
     assert actual_query == expected_query, "The SQL query did not match the expected structure."
@@ -217,10 +217,10 @@ def test_get_boxer_by_name_not_found(mock_cursor):
     """Test error when getting a non-existent boxer by name."""
     mock_cursor.fetchone.return_value = None
     
-    with pytest.raises(ValueError, match="Boxer with name 'Nonexistent Boxer' not found"):
+    with pytest.raises(ValueError, match="Boxer 'Nonexistent Boxer' not found."):
         get_boxer_by_name("Nonexistent Boxer")
         
-    expected_query = normalize_whitespace("SELECT id, name, weight, height, reach, age, fights, wins FROM boxers WHERE name = ?")
+    expected_query = normalize_whitespace("SELECT id, name, weight, height, reach, age FROM boxers WHERE name = ?")
     actual_query = normalize_whitespace(mock_cursor.execute.call_args[0][0])
     
     assert actual_query == expected_query, "The SQL query did not match the expected structure."
@@ -244,7 +244,7 @@ def test_get_weight_class_featherweight():
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
     
-    result = get_weight_class(134)
+    result = get_weight_class(132)
     expected_result = "FEATHERWEIGHT"
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
@@ -252,12 +252,12 @@ def test_get_weight_class_featherweight():
 
 def test_get_weight_class_lightweight():
     """Test determining lightweight class."""
-    result = get_weight_class(135)
+    result = get_weight_class(133)
     expected_result = "LIGHTWEIGHT"
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
     
-    result = get_weight_class(144)
+    result = get_weight_class(165)
     expected_result = "LIGHTWEIGHT"
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
@@ -265,12 +265,12 @@ def test_get_weight_class_lightweight():
 
 def test_get_weight_class_middleweight():
     """Test determining middleweight class."""
-    result = get_weight_class(145)
+    result = get_weight_class(166)
     expected_result = "MIDDLEWEIGHT"
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
     
-    result = get_weight_class(174)
+    result = get_weight_class(202)
     expected_result = "MIDDLEWEIGHT"
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
@@ -278,7 +278,7 @@ def test_get_weight_class_middleweight():
 
 def test_get_weight_class_heavyweight():
     """Test determining heavyweight class."""
-    result = get_weight_class(175)
+    result = get_weight_class(203)
     expected_result = "HEAVYWEIGHT"
     
     assert result == expected_result, f"Expected {expected_result}, got {result}"
@@ -291,7 +291,7 @@ def test_get_weight_class_heavyweight():
 
 def test_get_weight_class_invalid_weight():
     """Test error for invalid weight."""
-    with pytest.raises(ValueError, match="Weight must be at least 125 pounds"):
+    with pytest.raises(ValueError, match="Invalid weight: 124. Weight must be at least 125."):
         get_weight_class(124)
 
 
@@ -309,7 +309,7 @@ def test_get_leaderboard_by_wins(mock_cursor):
     ]
     mock_cursor.fetchall.return_value = mock_boxers
     
-    result = get_leaderboard("wins")
+    result = get_leaderboard()
     
     expected_result = mock_boxers
     
@@ -355,7 +355,7 @@ def test_get_leaderboard_by_win_pct(mock_cursor):
 
 def test_get_leaderboard_invalid_sort(mock_cursor):
     """Test error when providing an invalid sort parameter."""
-    with pytest.raises(ValueError, match="Invalid sort parameter. Use 'wins' or 'win_pct'"):
+    with pytest.raises(ValueError, match="Invalid sort_by parameter: invalid_sort"):
         get_leaderboard("invalid_sort")
 
 
@@ -399,7 +399,7 @@ def test_update_boxer_stats_win(mock_cursor):
     
     # Check the select query
     expected_select_query = normalize_whitespace("""
-        SELECT id, name, weight, height, reach, age, fights, wins 
+        SELECT id
         FROM boxers WHERE id = ?
     """)
     actual_select_query = normalize_whitespace(mock_cursor.execute.call_args_list[0][0][0])
@@ -437,7 +437,7 @@ def test_update_boxer_stats_loss(mock_cursor):
     
     # Check the select query
     expected_select_query = normalize_whitespace("""
-        SELECT id, name, weight, height, reach, age, fights, wins 
+        SELECT id
         FROM boxers WHERE id = ?
     """)
     actual_select_query = normalize_whitespace(mock_cursor.execute.call_args_list[0][0][0])
@@ -465,7 +465,7 @@ def test_update_boxer_stats_loss(mock_cursor):
 
 def test_update_boxer_stats_invalid_result():
     """Test error when providing an invalid result."""
-    with pytest.raises(ValueError, match="Result must be either 'win' or 'loss'"):
+    with pytest.raises(ValueError, match="Invalid result: draw. Expected 'win' or 'loss'."):
         update_boxer_stats(1, "draw")
 
 
@@ -474,11 +474,11 @@ def test_update_boxer_stats_not_found(mock_cursor):
     # Simulate that no boxer exists with the given ID
     mock_cursor.fetchone.return_value = None
     
-    with pytest.raises(ValueError, match="Boxer with ID 999 not found"):
+    with pytest.raises(ValueError, match="Boxer with ID 999 not found."):
         update_boxer_stats(999, "win")
         
     expected_query = normalize_whitespace("""
-        SELECT id, name, weight, height, reach, age, fights, wins 
+        SELECT id
         FROM boxers WHERE id = ?
     """)
     actual_query = normalize_whitespace(mock_cursor.execute.call_args[0][0])
@@ -489,3 +489,6 @@ def test_update_boxer_stats_not_found(mock_cursor):
     expected_arguments = (999,)
     
     assert actual_arguments == expected_arguments, f"The SQL query arguments did not match. Expected {expected_arguments}, got {actual_arguments}."
+    
+    
+    

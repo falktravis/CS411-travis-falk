@@ -126,7 +126,8 @@ class RingModel:
         """
         
         if not self.ring:
-            pass
+            logger.warning("No boxers in the ring")
+            return []
         else:
             pass
         

@@ -30,7 +30,7 @@ check_health() {
     echo "Service is healthy."
   else
     echo "Health check failed."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -42,7 +42,7 @@ check_db() {
     echo "Database connection is healthy."
   else
     echo "Database check failed."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -68,7 +68,7 @@ add_boxer() {
     echo "Boxer added successfully."
   else
     echo "Failed to add boxer."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -81,7 +81,7 @@ delete_boxer_by_id() {
     echo "Boxer deleted successfully by ID ($boxer_id)."
   else
     echo "Failed to delete boxer by ID ($boxer_id)."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -98,7 +98,7 @@ get_boxer_by_id() {
     fi
   else
     echo "Failed to get boxer by ID ($boxer_id)."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -116,7 +116,7 @@ get_boxer_by_name() {
     fi
   else
     echo "Failed to get boxer by NAME ($boxer_name)."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -138,7 +138,7 @@ fight() {
     fi
   else
     echo "Failed to initiate bout."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -154,7 +154,7 @@ get_boxers() {
     fi
   else
     echo "Failed to get boxers."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -167,7 +167,7 @@ clear_boxers() {
     echo "Ring cleared successfully."
   else
     echo "Failed to clear ring."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -187,7 +187,7 @@ enter_ring() {
     fi
   else
     echo "Failed to add boxer to ring."
-    #exit 1
+    exit 1
   fi
 }
 
@@ -209,7 +209,7 @@ get_leaderboard() {
     fi
   else
     echo "Failed to get boxers leaderboard."
-    #exit 1
+    exit 1
   fi
 }
 

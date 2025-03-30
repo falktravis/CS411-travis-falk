@@ -176,16 +176,16 @@ def get_leaderboard(sort_by: str = "wins") -> List[dict[str, Any]]:
         leaderboard = []
         for row in rows:
             boxer = {
-                'id': row[0],
-                'name': row[1],
-                'weight': row[2],
-                'height': row[3],
-                'reach': row[4],
-                'age': row[5],
-                'weight_class': get_weight_class(row[2]),  # Calculate weight class
-                'fights': row[6],
-                'wins': row[7],
-                'win_pct': round(row[8] * 100, 1)  # Convert to percentage
+                'id': row['id'],
+                'name': row['name'],
+                'weight': row['weight'],
+                'height': row['height'],
+                'reach': row['reach'],
+                'age': row['age'],
+                #'weight_class': get_weight_class(row['weight']),  # Calculate weight class
+                'fights': row['fights'],
+                'wins': row['wins'],
+                'win_pct': round(row['win_pct'] * 1.0, 1)  # Convert to percentage
             }
             leaderboard.append(boxer)
 

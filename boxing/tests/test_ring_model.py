@@ -23,6 +23,27 @@ def sample_boxer2():
 @pytest.fixture
 def sample_ring(sample_boxer1, sample_boxer2):
     return [sample_boxer1, sample_boxer2]
+    
+# Mocking the database connection for tests
+@pytest.fixture
+def mock_cursor(mocker):
+    mock_conn = mocker.Mock()
+    mock_cursor = mocker.Mock()
+
+    # Mock the connection's cursor
+    mock_conn.cursor.return_value = mock_cursor
+    mock_cursor.fetchone.return_value = None  # Default return for queries
+    mock_cursor.fetchall.return_value = []
+    mock_cursor.commit.return_value = None
+
+    # Mock the get_db_connection context manager from sql_utils
+    @contextmanager
+    def mock_get_db_connection():
+        yield mock_conn  # Yield the mocked connection object
+
+    mocker.patch("playlist.models.song_model.get_db_connection", mock_get_db_connection)
+
+    return mock_cursor  # Return the mock cursor so we can set expectations per test
 
 
 ##################################################
@@ -39,20 +60,22 @@ def test_enter_ring(ring_model, sample_boxer1):
     assert ring_model.ring[0].name == 'Boxer 1'
 
 
-def test_add_duplicate_boxer_to_ring(ring_model, sample_boxer1):
-    """Test error when adding a duplicate boxer to the ring by ID.
+def test_add_boxer_to_ring_too_many(ring_model, sample_boxer1):
+    """Test error when adding a too many boxers to the ring by ID.
 
     """
     ring_model.enter_ring(sample_boxer1)
-    with pytest.raises(ValueError, match="Boxer with ID 1 already exists in the ring"):
+    with pytest.raises(ValueError, match="Ring is full, cannot add more boxers."):
+        ring_model.enter_ring(sample_boxer1)
+        ring_model.enter_ring(sample_boxer1)
         ring_model.enter_ring(sample_boxer1)
 
 
-def test_add_boxer_song_to_ring(ring_model, sample_boxer1):
+def test_add_boxer_to_ring_bad_boxer(ring_model, sample_boxer1):
     """Test error when adding a bad boxer to the ring.
 
     """
-    with pytest.raises(TypeError, match="boxer is not a valid Boxer instance"):
+    with pytest.raises(TypeError, match="Invalid type: Expected 'Boxer', got 'dict'"):
         ring_model.enter_ring(asdict(sample_boxer1))
 
 
@@ -77,7 +100,7 @@ def test_get_boxers(ring_model, sample_ring):
     """
     ring_model.ring.extend(sample_ring)
     
-    all_boxers = RingModel.get_boxers()
+    all_boxers = ring_model.get_boxers()
     assert len(all_boxers) == 2
 
     assert all_boxers[0].id == 1
@@ -86,7 +109,7 @@ def test_get_boxers(ring_model, sample_ring):
     assert all_boxers[0].height == 68
     assert all_boxers[0].reach == 2.2
     assert all_boxers[0].age == 25
-    assert all_boxers[0].weight_class == 'LIGHTWEIGHT'
+    assert all_boxers[0].weight_class == 'FEATHERWEIGHT'
     
     assert all_boxers[1].id == 2
     assert all_boxers[1].name == 'Boxer 2'
@@ -94,7 +117,7 @@ def test_get_boxers(ring_model, sample_ring):
     assert all_boxers[1].height == 71
     assert all_boxers[1].reach == 2.6
     assert all_boxers[1].age == 32
-    assert all_boxers[1].weight_class == 'MIDDLEWEIGHT'
+    assert all_boxers[1].weight_class == 'LIGHTWEIGHT'
     
     
 def test_get_fighting_skill(ring_model, sample_boxer1):
@@ -103,13 +126,17 @@ def test_get_fighting_skill(ring_model, sample_boxer1):
     """
     
     sample_boxer_skill1 = ring_model.get_fighting_skill(sample_boxer1)
-    assert sample_boxer_skill1 == 917.22 # Expected Boxer 1 skill to be 917.22
+    assert sample_boxer_skill1 == 917.22
     
     
-def test_fight(ring_model):
+def test_fight(ring_model, sample_ring, mock_cursor):
     """Tests creating a fight between boxers in the ring
     
     """
+    
+    ring_model.ring.extend(sample_ring)
+    result = ring_model.fight()
+    assert result == 'winner'
     
     with pytest.raises(ValueError, match="There must be two boxers to start a fight."):
         ring_model.fight()
