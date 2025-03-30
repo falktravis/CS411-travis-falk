@@ -1,0 +1,14 @@
+(venv) briancapozza@briancapozza:~/CS411-travis-falk/boxing$ pytest
+============================================================== test session starts ==============================================================
+platform linux -- Python 3.12.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: /home/briancapozza/CS411-travis-falk/boxing
+plugins: mock-3.14.0
+collected 36 items                                                                                                                              
+
+tests/test_api_utils.py ....                                                                                                              [ 11%]
+tests/test_boxers_model.py .........................                                                                                      [ 80%]
+tests/test_ring_model.py .......                                                                                                          [100%]
+
+============================================================== 36 passed in 0.50s ===============================================================
+(venv) briancapozza@briancapozza:~/CS411-travis-falk/boxing$ 
+

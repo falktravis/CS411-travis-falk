@@ -23,27 +23,6 @@ def sample_boxer2():
 @pytest.fixture
 def sample_ring(sample_boxer1, sample_boxer2):
     return [sample_boxer1, sample_boxer2]
-    
-# Mocking the database connection for tests
-@pytest.fixture
-def mock_cursor(mocker):
-    mock_conn = mocker.Mock()
-    mock_cursor = mocker.Mock()
-
-    # Mock the connection's cursor
-    mock_conn.cursor.return_value = mock_cursor
-    mock_cursor.fetchone.return_value = None  # Default return for queries
-    mock_cursor.fetchall.return_value = []
-    mock_cursor.commit.return_value = None
-
-    # Mock the get_db_connection context manager from sql_utils
-    @contextmanager
-    def mock_get_db_connection():
-        yield mock_conn  # Yield the mocked connection object
-
-    mocker.patch("playlist.models.song_model.get_db_connection", mock_get_db_connection)
-
-    return mock_cursor  # Return the mock cursor so we can set expectations per test
 
 
 ##################################################
@@ -129,17 +108,17 @@ def test_get_fighting_skill(ring_model, sample_boxer1):
     assert sample_boxer_skill1 == 917.22
     
     
-def test_fight(ring_model, sample_ring, mock_cursor):
-    """Tests creating a fight between boxers in the ring
-    
-    """
+def test_fight(ring_model, sample_ring, mocker):
+    """Tests creating a fight between boxers in the ring."""
     
     ring_model.ring.extend(sample_ring)
-    result = ring_model.fight()
-    assert result == 'winner'
     
+    mock_stats_update = mocker.patch('boxing.models.ring_model.update_boxer_stats')
+    result = ring_model.fight()
+    assert result == 'Boxer 1'  # Ensure the fight method returns the winner
+    
+    ring_model.ring.clear() 
     with pytest.raises(ValueError, match="There must be two boxers to start a fight."):
         ring_model.fight()
-    
     
     
