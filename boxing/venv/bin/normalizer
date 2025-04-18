@@ -1,4 +1,4 @@
-#!/home/briancapozza/CS411-travis-falk/boxing/venv/bin/python
+#!/home/briancapozza/CS411-HW3/boxing/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
