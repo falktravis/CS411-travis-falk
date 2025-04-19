@@ -115,7 +115,7 @@ class RingModel:
         """
         if len(self.ring) >= 2:
             logger.error(f"Attempted to add boxer ID {boxer_id} but the ring is full")
-            raise ValueError(f"Attempted to add boxer ID {boxer_id} but the ring is full")
+            raise ValueError("Ring is full")
 
         try:
             boxer = Boxers.get_boxer_by_id(boxer_id)
@@ -127,7 +127,6 @@ class RingModel:
         self.ring.append(boxer_id)
         logger.info(f"Current boxers in the ring: {[Boxers.get_boxer_by_id(b).name for b in self.ring]}")
 
-
     def get_boxers(self) -> List[Boxers]:
         """Retrieves the current list of boxers in the ring.
 
@@ -137,16 +136,28 @@ class RingModel:
         """
         if not self.ring:
             logger.warning("Retrieving boxers from an empty ring.")
+            return []
         else:
             logger.info(f"Retrieving {len(self.ring)} boxers from the ring.")
-
+        
+        boxers = []
+        now = time.time()
+        
         for boxer_id in self.ring:
-            if expired:
-                logger.info(f"TTL expired or missing for boxer {boxer_id}. Refreshing from DB.")
-            else:
+            # Check if boxer exists in cache and TTL is valid
+            if boxer_id in self._boxer_cache and self._ttl.get(boxer_id, 0) > now:
                 logger.debug(f"Using cached boxer {boxer_id} (TTL valid).")
-
+                boxers.append(self._boxer_cache[boxer_id])
+            else:
+                # TTL expired or boxer not in cache, refresh from DB
+                logger.info(f"TTL expired or missing for boxer {boxer_id}. Refreshing from DB.")
+                boxer = Boxers.get_boxer_by_id(boxer_id)
+                self._boxer_cache[boxer_id] = boxer
+                self._ttl[boxer_id] = now + self.ttl_seconds
+                boxers.append(boxer)
+        
         logger.info(f"Retrieved {len(boxers)} boxers from the ring.")
+        return boxers
 
     def get_fighting_skill(self, boxer: Boxers) -> float:
         """Calculates the fighting skill for a boxer based on arbitrary rules.
