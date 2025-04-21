@@ -54,6 +54,23 @@ class Boxers(db.Model):
         self.height = height
         self.reach = reach
         self.age = age
+        
+    def validate(self) -> None:
+        """Validates the boxer instance before committing to the database.
+
+        Raises:
+            ValueError: If any required fields are invalid.
+        """
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Name must be a non-empty string.")
+        #if not isinstance(self.height, float) or self.height <= 0:
+        #    raise ValueError("Height must be a float greater than 0.")
+        #if not isinstance(self.weight, float) or self.weight < 125:
+        #    raise ValueError("Weight must be a float greater than 125.")
+        #if not isinstance(self.reach, float) or self.reach <= 0:
+        #    raise ValueError("Reach must be a float greater than 0.")
+        #if not isinstance(self.age, int) or self.age < 18 or self.age > 40:
+        #    raise ValueError("Age must be a int between 18 and 40, inclusive.")
 
     @classmethod
     def get_weight_class(cls, weight: float) -> str:
@@ -141,7 +158,7 @@ class Boxers(db.Model):
             ValueError: If the boxer with the given ID does not exist.
 
         """
-        ogger.info(f"Attempting to retrieve song with ID {song_id}")
+        logger.info(f"Attempting to retrieve song with ID {boxer_id}")
 
         try:
             boxer = cls.query.get(boxer_id)
