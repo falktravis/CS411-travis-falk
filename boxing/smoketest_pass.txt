@@ -1,0 +1,11 @@
+(venv) briancapozza@briancapozza:~/CS411-HW3/boxing$ python3 -m smoketest
+Reset users successful
+Reset boxers successful
+User creation successful
+Login successful
+Boxer creation successful
+Password change successful
+Login with new password successful
+Boxer creation successful
+Logout successful
+Boxer creation failed as expected
